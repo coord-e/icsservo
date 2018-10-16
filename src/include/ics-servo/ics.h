@@ -1,3 +1,5 @@
+namespace IcsServo {
+
 class Servo {
 public:
   Servo(ServoID);
@@ -18,3 +20,5 @@ public:
   std::uint8_t get_temperature();
   Position get_position();
 };
+
+}
