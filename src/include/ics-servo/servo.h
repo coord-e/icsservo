@@ -1,3 +1,6 @@
+#ifndef ICS_SERVO_SERVO_H
+#define ICS_SERVO_SERVO_H
+
 namespace IcsServo {
 
 class Servo {
@@ -22,3 +25,5 @@ public:
 };
 
 }
+
+#endif
