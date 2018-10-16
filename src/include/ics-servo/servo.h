@@ -1,7 +1,12 @@
 #ifndef ICS_SERVO_SERVO_H
 #define ICS_SERVO_SERVO_H
 
+#include <cstddef>
+#include <cstdint>
+
 namespace IcsServo {
+
+using ServoID = std::uint8_t;
 
 class Servo {
 public:
