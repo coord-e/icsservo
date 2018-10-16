@@ -9,6 +9,8 @@ namespace IcsServo {
 using ServoID = std::uint8_t;
 
 class Servo {
+  ServoID id;
+
 public:
   Servo(ServoID);
 
