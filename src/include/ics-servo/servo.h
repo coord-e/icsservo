@@ -8,11 +8,17 @@ namespace IcsServo {
 
 using ServoID = std::uint8_t;
 
+class UARTProvider {
+public:
+  template<typename InputIterator, typename OutputIterator>
+  void send_and_recv(InputIterator first, InputIterator last, std::size_t n, OutputIterator result);
+};
+
 class Servo {
   ServoID id;
 
 public:
-  Servo(ServoID);
+  Servo(UARTProvider, ServoID);
 
   using Position = double;
 
