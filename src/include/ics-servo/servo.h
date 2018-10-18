@@ -9,7 +9,12 @@ namespace IcsServo {
 using ServoID = std::uint8_t;
 
 class UARTProvider {
+  int fd;
+  int gpio_fd;
+
 public:
+  UARTProvider(std::string const& device, speed_t speed, std::size_t en_pin_idx);
+
   template<typename InputIterator, typename OutputIterator>
   void send_and_recv(InputIterator first, InputIterator last, std::size_t n, OutputIterator result);
 };
