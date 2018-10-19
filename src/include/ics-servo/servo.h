@@ -9,7 +9,7 @@ namespace IcsServo {
 using ServoID = std::uint8_t;
 
 class UARTProvider {
-  int fd;
+  int serial_fd;
   int gpio_fd;
 
 public:
