@@ -17,6 +17,9 @@ public:
 
   template<typename InputIterator, typename OutputIterator>
   void send_and_recv(InputIterator first, InputIterator last, std::size_t n, OutputIterator result);
+
+private:
+  void set_gpio_value(bool state);
 };
 
 class Servo {

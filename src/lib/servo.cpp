@@ -58,4 +58,8 @@ UARTProvider::UARTProvider(std::string const& device, speed_t speed, std::size_t
     }
 }
 
+void UARTProvider::set_gpio_value(bool state) {
+  if(::write(this->gpio_fd, state ? "1\n" : "0\n", std::strlen(2)) < 0) {
+    throw std::runtime_error("Cannot write gpio value ");
+  }
 }
