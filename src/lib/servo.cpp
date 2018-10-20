@@ -101,7 +101,20 @@ void Servo::set_free() {
   this->provider->send(std::cbegin(command), std::cend(command));
 }
 
-void Servo::set_stretch(std::uint8_t stretch);
+void Servo::set_stretch(std::uint8_t stretch) {
+  if (stretch < 1 || stretch > 127) {
+    throw std::out_of_range("Stretch value out of range.");
+  }
+
+  std::uint8_t command[3] = {
+    0xC0 + this->id,
+    0x01,
+    stretch
+  };
+
+  this->provider->send(std::cbegin(command), std::cend(command));
+}
+
 void Servo::set_speed(std::uint8_t speed);
 void Servo::set_current_limit(std::uint8_t current_limit);
 void Servo::set_temperature_limit(std::uint8_t tmperature_limit);
