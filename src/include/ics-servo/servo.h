@@ -9,27 +9,24 @@ namespace IcsServo {
 using ServoID = std::uint8_t;
 
 class UARTProvider {
-  int serial_fd;
+  std::fstream serial_stream;
   int gpio_fd;
 
 public:
   UARTProvider(std::string const& device, speed_t speed, std::size_t en_pin_idx);
 
-  template<typename InputIterator, typename OutputIterator>
-  void send_and_recv(InputIterator first, InputIterator last, std::size_t n, OutputIterator result) {
+  template<typename InputIterator>
+  void send(InputIterator first, InputIterator last) {
     this->set_gpio_value(true); // send
-    if(::write(this->serial_fd, first, std::distance(first, last)) < 0) {
-      throw std::runtime_error("Cannot write serial");
-    }
+    std::copy(first, last, std::ostreambuf_iterator<std::uint8_t>(this->serial_stream));
+    this->serial_stream.rdbuf()->sync();
+  }
 
+  template<typename OutputIterator>
+  void recv(std::size_t n, OutputIterator first) {
     this->set_gpio_value(false); // recv
-
-    std::vector<std::uint8_t> v(n);
-    if(::read(this->serial_fd, v.data(), n) < 0) {
-      throw std::runtime_error("Cannot read serial");
-    }
-
-    std::copy_n(std::cbegin(v), n, result);
+    std::copy(std::istreambuf_iterator<std::uint8_t>(this->serial_stream), n, first);
+    this->serial_stream.rdbuf()->sync();
   }
 
 private:

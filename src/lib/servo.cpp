@@ -6,8 +6,8 @@ namespace IcsServo {
 
 UARTProvider::UARTProvider(std::string const& device, speed_t speed, std::size_t en_idx)
   : en_pin_idx(en_idx) {
-    this->serial_fd = ::open(device.c_str(), O_RDWR);
-    if (fd < 0) {
+    const int serial_fd = ::open(device.c_str(), O_RDWR);
+    if (serial_fd < 0) {
       throw std::runtime_error("Cannot open " + device);
     }
 
@@ -21,12 +21,13 @@ UARTProvider::UARTProvider(std::string const& device, speed_t speed, std::size_t
 
     cfmakeraw(&tio);
 
-    tcsetattr(this->serial_fd, TCSANOW, &tio);
+    tcsetattr(serial_fd, TCSANOW, &tio);
 
-    if(ioctl(this->serial_fd, TCSETS, &tio) < 0) {
+    if(ioctl(serial_fd, TCSETS, &tio) < 0) {
       throw std::runtime_error("Cannot set serial port setting to " + device);
     }
-
+    ::close(serial_fd);
+    this->serial_stream.open(device);
 
     auto const export_fd = ::open("/sys/class/gpio/export", O_RDWR);
     if(export_fd < 0) {
