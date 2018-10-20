@@ -65,9 +65,14 @@ void UARTProvider::set_gpio_value(bool state) {
   }
 }
 
-std::uint16_t Servo::rad_to_internal(Position pos) {
+InternalPosition Servo::rad_to_internal(Position pos) {
   const double deg = pos * 180 / M_PI;
   return deg * 29.633 + 7500;
+}
+
+Position Servo::internal_to_rad(InternalPosition ipos) {
+  const double deg = (ipos - 7500) / 29.633;
+  return deg * M_PI / 180;
 }
 
 bool Servo::check_range(Position) {

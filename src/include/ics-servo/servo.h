@@ -69,6 +69,7 @@ public:
 private:
   using InternalPosition = std::uint16_t;
   InternalPosition rad_to_internal(Position);
+  Position internal_to_rad(InternalPosition);
   bool check_range(Position);
 
   void write_param(Subcommand sc, std::uint8_t data);
