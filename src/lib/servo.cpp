@@ -91,7 +91,15 @@ void Servo::set_position(Position pos) {
   this->provider->send(std::cbegin(command), std::cend(command));
 }
 
-void Servo::set_free();
+void Servo::set_free() {
+  std::uint8_t command[3] = {
+    0x80 + this->id,
+    0,
+    0
+  };
+
+  this->provider->send(std::cbegin(command), std::cend(command));
+}
 
 void Servo::set_stretch(std::uint8_t stretch);
 void Servo::set_speed(std::uint8_t speed);
