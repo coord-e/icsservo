@@ -16,7 +16,21 @@ public:
   UARTProvider(std::string const& device, speed_t speed, std::size_t en_pin_idx);
 
   template<typename InputIterator, typename OutputIterator>
-  void send_and_recv(InputIterator first, InputIterator last, std::size_t n, OutputIterator result);
+  void send_and_recv(InputIterator first, InputIterator last, std::size_t n, OutputIterator result) {
+    this->set_gpio_value(true); // send
+    if(::write(this->serial_fd, first, std::distance(first, last)) < 0) {
+      throw std::runtime_error("Cannot write serial");
+    }
+
+    this->set_gpio_value(false); // recv
+
+    std::vector<std::uint8_t> v(n);
+    if(::read(this->serial_fd, v.data(), n) < 0) {
+      throw std::runtime_error("Cannot read serial");
+    }
+
+    std::copy_n(std::cbegin(v), n, result);
+  }
 
 private:
   void set_gpio_value(bool state);
