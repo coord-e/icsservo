@@ -4,7 +4,7 @@
 
 namespace IcsServo {
 
-UARTProvider::UARTProvider(std::string const& device, speed_t speed, std::size_t en_idx)
+IOProvider::IOProvider(std::string const& device, speed_t speed, std::size_t en_idx)
   : en_pin_idx(en_idx) {
     const int serial_fd = ::open(device.c_str(), O_RDWR);
     if (serial_fd < 0) {
@@ -59,7 +59,7 @@ UARTProvider::UARTProvider(std::string const& device, speed_t speed, std::size_t
     }
 }
 
-void UARTProvider::set_gpio_value(bool state) {
+void IOProvider::set_gpio_value(bool state) {
   if(::write(this->gpio_fd, state ? "1\n" : "0\n", std::strlen(2)) < 0) {
     throw std::runtime_error("Cannot write gpio value ");
   }
@@ -105,7 +105,7 @@ std::uint8_t Servo::read_param(Subcommand sc) {
   return recv[3];
 }
 
-Servo::Servo(std::shared_ptr<UARTProvider> prov_, ServoID id_) : provider(prov_), id(id_) {}
+Servo::Servo(std::shared_ptr<IOProvider> prov_, ServoID id_) : provider(prov_), id(id_) {}
 
 void Servo::set_position(Position pos) {
   if (!this->check_range(pos)) {

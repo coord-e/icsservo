@@ -8,12 +8,12 @@ namespace IcsServo {
 
 using ServoID = std::uint8_t;
 
-class UARTProvider {
+class IOProvider {
   std::fstream serial_stream;
   int gpio_fd;
 
 public:
-  UARTProvider(std::string const& device, speed_t speed, std::size_t en_pin_idx);
+  IOProvider(std::string const& device, speed_t speed, std::size_t en_pin_idx);
 
   template<typename InputIterator>
   void send(InputIterator first, InputIterator last) {
@@ -45,10 +45,10 @@ enum class Subcommand {
 
 class Servo {
   ServoID id;
-  std::shared_ptr<UARTProvider> provider;
+  std::shared_ptr<IOProvider> provider;
 
 public:
-  Servo(std::shared_ptr<UARTProvider>, ServoID);
+  Servo(std::shared_ptr<IOProvider>, ServoID);
 
   using Position = double;
   static constexpr Position max_pos = M_PI;
