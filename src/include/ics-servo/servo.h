@@ -4,35 +4,11 @@
 #include <cstddef>
 #include <cstdint>
 
+#include "ics-servo/ioprovider.h"
+
 namespace IcsServo {
 
 using ServoID = std::uint8_t;
-
-class IOProvider {
-  std::fstream serial_stream;
-  int gpio_fd;
-
-public:
-  IOProvider(std::string const& device, speed_t speed, std::size_t en_pin_idx);
-
-  template<typename InputIterator>
-  void send(InputIterator first, InputIterator last) {
-    this->set_gpio_value(true); // send
-    std::copy(first, last, std::ostreambuf_iterator<std::uint8_t>(this->serial_stream));
-    this->serial_stream.rdbuf()->sync();
-  }
-
-  template<typename OutputIterator>
-  void recv(std::size_t n, OutputIterator first) {
-    this->set_gpio_value(false); // recv
-    std::copy(std::istreambuf_iterator<std::uint8_t>(this->serial_stream), n, first);
-    this->serial_stream.rdbuf()->sync();
-  }
-
-private:
-  void set_gpio_value(bool state);
-};
-
 
 enum class Subcommand {
   EEPROM = 0x00,
