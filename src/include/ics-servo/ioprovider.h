@@ -8,7 +8,7 @@
 #include <iterator>
 #include <algorithm>
 
-namespace IcsServo {
+namespace ICSServo {
 
 class IOProvider {
   std::fstream serial_stream;

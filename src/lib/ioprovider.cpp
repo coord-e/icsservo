@@ -2,7 +2,7 @@
 
 #include <stdexcept>
 
-namespace IcsServo {
+namespace ICSServo {
 
 IOProvider::IOProvider(std::string const& device, speed_t speed, std::size_t en_idx)
   : en_pin_idx(en_idx) {

@@ -8,7 +8,7 @@
 
 #include "ics-servo/ioprovider.h"
 
-namespace IcsServo {
+namespace ICSServo {
 
 using ServoID = std::uint8_t;
 

@@ -3,7 +3,7 @@
 #include <stdexcept>
 #include <vector>
 
-namespace IcsServo {
+namespace ICSServo {
 
 InternalPosition Servo::rad_to_internal(Position pos) {
   const double deg = pos * 180 / M_PI;
