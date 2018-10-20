@@ -51,6 +51,8 @@ public:
   Servo(std::shared_ptr<UARTProvider>, ServoID);
 
   using Position = double;
+  static constexpr Position max_pos = M_PI;
+  static constexpr Position min_pos = -M_PI;
 
   void set_position(Position);
   void set_free();
