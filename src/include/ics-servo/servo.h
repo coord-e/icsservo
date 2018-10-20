@@ -33,6 +33,16 @@ private:
   void set_gpio_value(bool state);
 };
 
+
+enum class Subcommand {
+  EEPROM = 0x00,
+  STRC = 0x01,
+  SPD = 0x02,
+  CUR = 0x03,
+  TMP = 0x04,
+  TCH = 0x05
+};
+
 class Servo {
   ServoID id;
   std::shared_ptr<UARTProvider> provider;
@@ -60,6 +70,9 @@ private:
   using InternalPosition = std::uint16_t;
   InternalPosition rad_to_internal(Position);
   bool check_range(Position);
+
+  void write_param(Subcommand sc, std::uint8_t data);
+  std::uint8_t read_param(Subcommand sc);
 };
 
 }

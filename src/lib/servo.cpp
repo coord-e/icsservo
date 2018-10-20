@@ -74,6 +74,32 @@ bool Servo::check_range(Position) {
   return pos <= Servo::max_pos || pos >= Servo::min_pos;
 }
 
+void Servo::write_param(Subcommand sc, std::uint8_t data) {
+  if (data < 1 || data > 127) {
+    throw std::out_of_range("Parameter value out of range.");
+  }
+
+  std::uint8_t command[3] = {
+    0xC0 + this->id,
+    static_cast<std::uint8_t>(sc),
+    data
+  };
+
+  this->provider->send(std::cbegin(command), std::cend(command));
+}
+
+std::uint8_t Servo::read_param(Subcommand sc) {
+  std::uint8_t command[2] = {
+    0xA0 + this->id,
+    static_cast<std::uint8_t>(sc)
+  };
+
+  this->provider->send(std::cbegin(command), std::cend(command));
+  std::vector<std::uint8_t> recv(3);
+  this->provider->read(3, std::begin(recv));
+  return recv[3];
+}
+
 Servo::Servo(std::shared_ptr<UARTProvider> prov_, ServoID id_) : provider(prov_), id(id_) {}
 
 void Servo::set_position(Position pos) {
