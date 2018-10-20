@@ -128,38 +128,37 @@ void Servo::set_free() {
 }
 
 void Servo::set_stretch(std::uint8_t stretch) {
-  if (stretch < 1 || stretch > 127) {
-    throw std::out_of_range("Stretch value out of range.");
-  }
-
-  std::uint8_t command[3] = {
-    0xC0 + this->id,
-    0x01,
-    stretch
-  };
-
-  this->provider->send(std::cbegin(command), std::cend(command));
+  this->write_param(Subcommand::STRC, stretch);
 }
 
 void Servo::set_speed(std::uint8_t speed) {
-  if (speed < 1 || speed > 127) {
-    throw std::out_of_range("Speed value out of range.");
-  }
-
-  std::uint8_t command[3] = {
-    0xC0 + this->id,
-    0x02,
-    speed
-  };
-
-  this->provider->send(std::cbegin(command), std::cend(command));
+  this->write_param(Subcommand::SPD, speed);
 }
 
-void Servo::set_current_limit(std::uint8_t current_limit);
-void Servo::set_temperature_limit(std::uint8_t tmperature_limit);
+void Servo::set_current_limit(std::uint8_t current_limit) {
+  this->write_param(Subcommand::CUR, current_limit);
+}
 
-std::uint8_t Servo::get_stretch();
-std::uint8_t Servo::get_speed();
-std::uint8_t Servo::get_current();
-std::uint8_t Servo::get_temperature();
-Position Servo::get_position();
+void Servo::set_temperature_limit(std::uint8_t tmperature_limit) {
+  this->write_param(Subcommand::TMP, temperature_limit);
+}
+
+std::uint8_t Servo::get_stretch() {
+  return this->read_param(Subcommand::STRC);
+}
+
+std::uint8_t Servo::get_speed() {
+  return this->read_param(Subcommand::SPD);
+}
+
+std::uint8_t Servo::get_current() {
+  return this->read_param(Subcommand::CUR);
+}
+
+std::uint8_t Servo::get_temperature() {
+  return this->read_param(Subcommand::TMP);
+}
+
+/* Position Servo::get_position() { */
+/*   return this->read_param(Subcommand::TCH); */
+/* } */
