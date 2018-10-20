@@ -1,6 +1,7 @@
 #include "ics-servo/servo.h"
 
 #include <stdexcept>
+#include <vector>
 
 namespace IcsServo {
 

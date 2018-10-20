@@ -3,6 +3,8 @@
 
 #include <cstddef>
 #include <cstdint>
+#include <cmath>
+#include <memory>
 
 #include "ics-servo/ioprovider.h"
 
