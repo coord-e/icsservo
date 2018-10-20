@@ -164,6 +164,15 @@ std::uint8_t Servo::get_temperature() {
   return this->read_param(Subcommand::TMP);
 }
 
-/* Position Servo::get_position() { */
-/*   return this->read_param(Subcommand::TCH); */
-/* } */
+Position Servo::get_position() {
+  std::uint8_t command[2] = {
+    0xA0 + this->id,
+    static_cast<std::uint8_t>(Subcommand::TCH)
+  };
+
+  this->provider->send(std::cbegin(command), std::cend(command));
+  std::vector<std::uint8_t> recv(3);
+  this->provider->read(3, std::begin(recv));
+  InternalPosition ipos = ((recv[2] << 7) & 0x3F80) + (recv[3] & 0x007F);
+  return this->internal_to_rad(ipos);
+}
