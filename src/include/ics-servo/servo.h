@@ -38,9 +38,10 @@ private:
 
 class Servo {
   ServoID id;
+  std::shared_ptr<UARTProvider> provider;
 
 public:
-  Servo(UARTProvider, ServoID);
+  Servo(std::shared_ptr<UARTProvider>, ServoID);
 
   using Position = double;
 
