@@ -55,6 +55,11 @@ public:
   std::uint8_t get_current();
   std::uint8_t get_temperature();
   Position get_position();
+
+private:
+  using InternalPosition = std::uint16_t;
+  InternalPosition rad_to_internal(Position);
+  bool check_range(Position);
 };
 
 }

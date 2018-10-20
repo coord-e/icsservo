@@ -64,3 +64,42 @@ void UARTProvider::set_gpio_value(bool state) {
     throw std::runtime_error("Cannot write gpio value ");
   }
 }
+
+std::uint16_t Servo::rad_to_internal(Position pos) {
+  const double deg = pos * 180 / M_PI;
+  return deg * 29.633 + 7500;
+}
+
+bool Servo::check_range(Position) {
+  return pos <= Servo::max_pos || pos >= Servo::min_pos;
+}
+
+Servo::Servo(std::shared_ptr<UARTProvider> prov_, ServoID id_) : provider(prov_), id(id_) {}
+
+void Servo::set_position(Position pos) {
+  if (!this->check_range(pos)) {
+    throw std::out_of_range("Position out of range.");
+  }
+
+  auto const ipos = this->rad_to_internal(pos);
+  std::uint8_t command[3] = {
+    0x80 + this->id,
+    (ipos >> 7) & 0x007F,
+    ipos & 0x007F
+  };
+
+  this->provider->send(std::cbegin(command), std::cend(command));
+}
+
+void Servo::set_free();
+
+void Servo::set_stretch(std::uint8_t stretch);
+void Servo::set_speed(std::uint8_t speed);
+void Servo::set_current_limit(std::uint8_t current_limit);
+void Servo::set_temperature_limit(std::uint8_t tmperature_limit);
+
+std::uint8_t Servo::get_stretch();
+std::uint8_t Servo::get_speed();
+std::uint8_t Servo::get_current();
+std::uint8_t Servo::get_temperature();
+Position Servo::get_position();
