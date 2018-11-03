@@ -9,6 +9,8 @@
 #include <termios.h>
 #include <algorithm>
 
+#include "ics-servo/ics.h"
+
 namespace ICSServo {
 
 class IOProvider {
@@ -34,6 +36,9 @@ public:
     this->set_gpio_value(false); // recv
     std::copy_n(std::istreambuf_iterator<std::uint8_t>(this->serial_stream), n, first);
   }
+
+  void set_id(ServoID);
+  ServoID get_id();
 
 private:
   void set_gpio_value(bool state);

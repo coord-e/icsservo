@@ -117,30 +117,5 @@ Servo::Position Servo::get_position() {
   return this->internal_to_rad(ipos);
 }
 
-void Servo::set_id(ServoID id_in) {
-  std::uint8_t command[4] = {
-    static_cast<std::uint8_t>(0xE0 + (0x1F & id_in)),
-    0x01,
-    0x01,
-    0x01,
-  };
-
-  this->provider->send(std::cbegin(command), std::cend(command));
-}
-
-ServoID Servo::get_id() {
-  std::uint8_t command[4] = {
-    0xFF,
-    0x00,
-    0x00,
-    0x00,
-  };
-
-  this->provider->send(std::cbegin(command), std::cend(command));
-  std::vector<std::uint8_t> recv(5);
-  this->provider->recv(5, std::begin(recv));
-  ServoID id_recv = recv[4] & 0x1F;
-  return id_recv;
-}
 
 }

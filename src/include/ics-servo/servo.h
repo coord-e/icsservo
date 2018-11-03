@@ -6,7 +6,7 @@
 #include <cmath>
 #include <memory>
 
-#include "ics-servo/ioprovider.h"
+#include "ics-servo/ics.h"
 
 namespace ICSServo {
 
@@ -43,9 +43,6 @@ public:
   std::uint8_t get_current();
   std::uint8_t get_temperature();
   Position get_position();
-
-  void set_id(ServoID);
-  ServoID get_id();
 
 private:
   using InternalPosition = std::uint16_t;
