@@ -46,6 +46,9 @@ public:
   std::uint8_t get_temperature();
   Position get_position();
 
+  void set_id(ServoID);
+  ServoID get_id();
+
 private:
   using InternalPosition = std::uint16_t;
   InternalPosition rad_to_internal(Position);
