@@ -6,6 +6,7 @@
 #include <fstream>
 #include <string>
 #include <iterator>
+#include <termios.h>
 #include <algorithm>
 
 namespace ICSServo {
