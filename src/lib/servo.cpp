@@ -25,7 +25,7 @@ void Servo::write_param(Subcommand sc, std::uint8_t data) {
   }
 
   std::uint8_t command[3] = {
-    0xC0 + this->id,
+    static_cast<std::uint8_t>(0xC0 + this->id),
     static_cast<std::uint8_t>(sc),
     data
   };
@@ -35,13 +35,13 @@ void Servo::write_param(Subcommand sc, std::uint8_t data) {
 
 std::uint8_t Servo::read_param(Subcommand sc) {
   std::uint8_t command[2] = {
-    0xA0 + this->id,
+    static_cast<std::uint8_t>(0xA0 + this->id),
     static_cast<std::uint8_t>(sc)
   };
 
   this->provider->send(std::cbegin(command), std::cend(command));
   std::vector<std::uint8_t> recv(3);
-  this->provider->read(3, std::begin(recv));
+  this->provider->recv(3, std::begin(recv));
   return recv[3];
 }
 
@@ -54,9 +54,9 @@ void Servo::set_position(Position pos) {
 
   auto const ipos = this->rad_to_internal(pos);
   std::uint8_t command[3] = {
-    0x80 + this->id,
-    (ipos >> 7) & 0x007F,
-    ipos & 0x007F
+    static_cast<std::uint8_t>(0x80 + this->id),
+    static_cast<std::uint8_t>((ipos >> 7) & 0x007F),
+    static_cast<std::uint8_t>(ipos & 0x007F)
   };
 
   this->provider->send(std::cbegin(command), std::cend(command));
@@ -64,7 +64,7 @@ void Servo::set_position(Position pos) {
 
 void Servo::set_free() {
   std::uint8_t command[3] = {
-    0x80 + this->id,
+    static_cast<std::uint8_t>(0x80 + this->id),
     0,
     0
   };
@@ -84,7 +84,7 @@ void Servo::set_current_limit(std::uint8_t current_limit) {
   this->write_param(Subcommand::CUR, current_limit);
 }
 
-void Servo::set_temperature_limit(std::uint8_t tmperature_limit) {
+void Servo::set_temperature_limit(std::uint8_t temperature_limit) {
   this->write_param(Subcommand::TMP, temperature_limit);
 }
 
@@ -104,15 +104,17 @@ std::uint8_t Servo::get_temperature() {
   return this->read_param(Subcommand::TMP);
 }
 
-Position Servo::get_position() {
+Servo::Position Servo::get_position() {
   std::uint8_t command[2] = {
-    0xA0 + this->id,
+    static_cast<std::uint8_t>(0xA0 + this->id),
     static_cast<std::uint8_t>(Subcommand::TCH)
   };
 
   this->provider->send(std::cbegin(command), std::cend(command));
   std::vector<std::uint8_t> recv(3);
-  this->provider->read(3, std::begin(recv));
+  this->provider->recv(3, std::begin(recv));
   InternalPosition ipos = ((recv[2] << 7) & 0x3F80) + (recv[3] & 0x007F);
   return this->internal_to_rad(ipos);
+}
+
 }

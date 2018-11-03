@@ -12,7 +12,7 @@
 namespace ICSServo {
 
 class IOProvider {
-  std::fstream serial_stream;
+  std::basic_fstream<std::uint8_t> serial_stream;
   int gpio_fd;
 
 public:
@@ -22,14 +22,13 @@ public:
   void send(InputIterator first, InputIterator last) {
     this->set_gpio_value(true); // send
     std::copy(first, last, std::ostreambuf_iterator<std::uint8_t>(this->serial_stream));
-    this->serial_stream.rdbuf()->sync();
+    this->serial_stream.flush();
   }
 
   template<typename OutputIterator>
   void recv(std::size_t n, OutputIterator first) {
     this->set_gpio_value(false); // recv
-    std::copy(std::istreambuf_iterator<std::uint8_t>(this->serial_stream), n, first);
-    this->serial_stream.rdbuf()->sync();
+    std::copy_n(std::istreambuf_iterator<std::uint8_t>(this->serial_stream), n, first);
   }
 
 private:
