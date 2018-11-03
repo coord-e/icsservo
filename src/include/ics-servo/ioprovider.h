@@ -14,9 +14,13 @@ namespace ICSServo {
 class IOProvider {
   std::basic_fstream<std::uint8_t> serial_stream;
   int gpio_fd;
+  std::size_t en_idx;
 
 public:
   IOProvider(std::string const& device, speed_t speed, std::size_t en_pin_idx);
+  ~IOProvider();
+
+  void close();
 
   template<typename InputIterator>
   void send(InputIterator first, InputIterator last) {
