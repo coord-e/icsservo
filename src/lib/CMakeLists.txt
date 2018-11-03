@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 2.7)
 
-add_library(ioprovider_lib STATIC ioprovider.cpp register.cpp)
+add_library(ioprovider_lib STATIC ioprovider.cpp)
 set_target_properties(ioprovider_lib PROPERTIES OUTPUT_NAME "ioprovider")
 set_target_properties(ioprovider_lib PROPERTIES POSITION_INDEPENDENT_CODE TRUE)
 
