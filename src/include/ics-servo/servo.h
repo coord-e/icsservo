@@ -10,8 +10,6 @@
 
 namespace ICSServo {
 
-using ServoID = std::uint8_t;
-
 enum class Subcommand {
   EEPROM = 0x00,
   STRC = 0x01,
