@@ -5,17 +5,17 @@
 
 namespace ICSServo {
 
-InternalPosition Servo::rad_to_internal(Position pos) {
+Servo::InternalPosition Servo::rad_to_internal(Servo::Position pos) {
   const double deg = pos * 180 / M_PI;
   return deg * 29.633 + 7500;
 }
 
-Position Servo::internal_to_rad(InternalPosition ipos) {
+Servo::Position Servo::internal_to_rad(Servo::InternalPosition ipos) {
   const double deg = (ipos - 7500) / 29.633;
   return deg * M_PI / 180;
 }
 
-bool Servo::check_range(Position) {
+bool Servo::check_range(Servo::Position pos) {
   return pos <= Servo::max_pos || pos >= Servo::min_pos;
 }
 
