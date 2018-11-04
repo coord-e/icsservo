@@ -8,17 +8,21 @@ namespace py = pybind11;
 namespace Adaptor {
 
 class IOProvider {
-  ::ICSServo::IOProvider provider;
+  std::shared_ptr<::ICSServo::IOProvider> provider;
 
 public:
-  IOProvider(std::string const& device, std::size_t en_pin_idx) : provider(device, en_pin_idx) {}
+  IOProvider(std::string const& device, std::size_t en_pin_idx) : provider(std::make_shared<::ICSServo::IOProvider>(device, en_pin_idx)) {}
+
+  ::ICSServo::Servo servo(::ICSServo::ServoID id) {
+    return ::ICSServo::Servo(this->provider, id);
+  }
 
   void set_id(::ICSServo::ServoID id) {
-    this->provider.set_id(id);
+    this->provider->set_id(id);
   }
 
   ::ICSServo::ServoID get_id() {
-    return this->provider.get_id();
+    return this->provider->get_id();
   }
 };
 
@@ -41,6 +45,7 @@ PYBIND11_MODULE(icsservo, m) {
 
   py::class_<Adaptor::IOProvider>(m, "IOProvider")
     .def(py::init<std::string, std::size_t>(), py::arg("device"), py::arg("en_idx"))
+    .def("servo", &Adaptor::IOProvider::servo)
     .def("set_id", &Adaptor::IOProvider::set_id)
     .def("get_id", &Adaptor::IOProvider::get_id);
 }
