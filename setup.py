@@ -74,6 +74,8 @@ class CMakeBuild(build_ext):
                 cwd=self.build_temp)
         print()  # Add an empty line for cleaner output
 
+with open("README.md") as f:
+        long_description = f.read()
 
 setup(
         name='icsservo',
@@ -81,7 +83,7 @@ setup(
         author='coord.e',
         author_email='me@coord-e.com',
         description='ICSServo: ICS serial servo driver library',
-        long_description='',
+        long_description=long_description,
         ext_modules=[CMakeExtension('icsservo', './src/')],
         cmdclass=dict(build_ext=CMakeBuild),
         zip_safe=False,
