@@ -72,11 +72,13 @@ IOProvider::IOProvider(std::string const& device, speed_t speed, std::size_t en_
 
 IOProvider::~IOProvider() {
   try {
-    this->close();
-  } catch (const std::exception& e) {
-    std::cerr << "Exeption happend during the destruction of IOProvider" << std::endl << e.what() << std::endl;
-    std::abort();
-  }
+    try {
+      this->close();
+    } catch (const std::exception& e) {
+      std::cerr << "Exeption happend during the destruction of IOProvider" << std::endl << e.what() << std::endl;
+      std::abort();
+    }
+  } catch (...) {}
 }
 
 void IOProvider::close() {
