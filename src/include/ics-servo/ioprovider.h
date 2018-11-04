@@ -14,7 +14,7 @@
 namespace ICSServo {
 
 class IOProvider {
-  std::basic_fstream<std::uint8_t> serial_stream;
+  std::fstream serial_stream;
   int gpio_fd;
   std::size_t en_idx;
 
@@ -27,14 +27,17 @@ public:
   template<typename InputIterator>
   void send(InputIterator first, InputIterator last) {
     this->set_gpio_value(true); // send
-    std::copy(first, last, std::ostreambuf_iterator<std::uint8_t>(this->serial_stream));
+    // This should be ostreambuf_iterator<uint8_t>, however it causes runtime error
+    // The code below works where sizeof(char) == 1, otherwise it may cause compilation error
+    std::copy(first, last, std::ostreambuf_iterator<char>(this->serial_stream));
     this->serial_stream.flush();
   }
 
   template<typename OutputIterator>
   void recv(std::size_t n, OutputIterator first) {
     this->set_gpio_value(false); // recv
-    std::copy_n(std::istreambuf_iterator<std::uint8_t>(this->serial_stream), n, first);
+    // ditto
+    std::copy_n(std::istreambuf_iterator<char>(this->serial_stream), n, first);
   }
 
   void set_id(ServoID);
