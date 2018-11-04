@@ -24,7 +24,7 @@ public:
 
 }
 
-PYBIND11_MODULE(servoarray, m) {
+PYBIND11_MODULE(icsservo, m) {
   m.doc() = "ICSServo: ICS serial servo driver library";
   py::class_<::ICSServo::Servo>(m, "Servo")
     .def("set_position", &::ICSServo::Servo::set_position)
