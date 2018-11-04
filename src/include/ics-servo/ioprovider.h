@@ -17,6 +17,7 @@ class IOProvider {
   std::fstream serial_stream;
   int gpio_fd;
   std::size_t en_idx;
+  bool is_closed;
 
 public:
   IOProvider(std::string const& device, speed_t speed, std::size_t en_pin_idx);
