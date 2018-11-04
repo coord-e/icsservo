@@ -88,7 +88,7 @@ setup(
         cmdclass=dict(build_ext=CMakeBuild),
         zip_safe=False,
         classifiers=[
-            'Development Status :: 4 - Beta',
+            'Development Status :: 2 - Pre-Alpha',
             'Intended Audience :: Developers',
             'Environment :: Other Environment',
             'License :: OSI Approved :: MIT License',
