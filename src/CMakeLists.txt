@@ -29,8 +29,8 @@ include_directories(include/)
 add_subdirectory(lib)
 add_subdirectory(bin)
 
-# add_subdirectory(pybind11)
+add_subdirectory(pybind11)
 # pybind11 headers produce so many errors with strict compiler options
-# include_directories(SYSTEM ${PYBIND11_INCLUDE_DIR})
+include_directories(SYSTEM ${PYBIND11_INCLUDE_DIR})
 
-# add_subdirectory(python)
+add_subdirectory(python)
