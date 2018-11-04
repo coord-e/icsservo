@@ -24,6 +24,14 @@ public:
   ::ICSServo::ServoID get_id() {
     return this->provider->get_id();
   }
+
+  IOProvider* enter() {
+    return this;
+  }
+
+  void exit(py::object ex_type, py::object ex_value, py::object trace) {
+    this->provider->close();
+  }
 };
 
 }
@@ -47,5 +55,7 @@ PYBIND11_MODULE(icsservo, m) {
     .def(py::init<std::string, std::size_t>(), py::arg("device"), py::arg("en_idx"))
     .def("servo", &Adaptor::IOProvider::servo)
     .def("set_id", &Adaptor::IOProvider::set_id)
-    .def("get_id", &Adaptor::IOProvider::get_id);
+    .def("get_id", &Adaptor::IOProvider::get_id)
+    .def("__enter__", &Adaptor::IOProvider::enter)
+    .def("__exit__", &Adaptor::IOProvider::exit);
 }
