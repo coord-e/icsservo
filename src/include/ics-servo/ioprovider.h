@@ -20,7 +20,7 @@ class IOProvider {
   bool is_closed;
 
 public:
-  IOProvider(std::string const& device, speed_t speed, std::size_t en_pin_idx);
+  IOProvider(std::string const& device, std::size_t en_pin_idx, speed_t speed);
   ~IOProvider();
 
   void close();
