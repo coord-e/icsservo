@@ -20,7 +20,8 @@ class IOProvider {
   bool is_closed;
 
 public:
-  IOProvider(std::string const& device, std::size_t en_pin_idx, speed_t speed = B115200);
+  // The real baud rate of B38400 can be configured using setserial(8)
+  IOProvider(std::string const& device, std::size_t en_pin_idx, speed_t speed = B38400);
   ~IOProvider();
 
   void close();
