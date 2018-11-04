@@ -46,6 +46,7 @@ public:
 
 private:
   void set_gpio_value(bool state);
+  void initialize(std::string const& device, std::size_t en_pin_idx, speed_t speed);
 };
 
 }
