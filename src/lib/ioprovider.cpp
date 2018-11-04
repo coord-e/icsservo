@@ -75,6 +75,7 @@ IOProvider::~IOProvider() {
     this->close();
   } catch (const std::exception& e) {
     std::cerr << "Exeption happend during the destruction of IOProvider" << std::endl << e.what() << std::endl;
+    std::abort();
   }
 }
 
