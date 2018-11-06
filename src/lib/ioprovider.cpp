@@ -14,7 +14,7 @@
 
 namespace ICSServo {
 
-IOProvider::IOProvider(std::string const& device, std::size_t en_idx_, speed_t speed)
+IOProvider::IOProvider(std::string const& device, std::size_t en_idx_)
   : en_idx(en_idx_), is_closed(false)
   {
     this->serial_fd = ::open(device.c_str(), O_RDWR | O_NOCTTY);
