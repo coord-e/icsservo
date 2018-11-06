@@ -20,8 +20,8 @@ enum class Subcommand {
 };
 
 class Servo {
-  ServoID id;
   std::shared_ptr<IOProvider> provider;
+  ServoID id;
 
 public:
   Servo(std::shared_ptr<IOProvider>, ServoID);
