@@ -17,7 +17,7 @@ namespace ICSServo {
 IOProvider::IOProvider(std::string const& device, std::size_t en_idx_, speed_t speed)
   : en_idx(en_idx_), is_closed(false)
   {
-    this->serial_fd = ::open(device.c_str(), O_RDWR);
+    this->serial_fd = ::open(device.c_str(), O_RDWR | O_NOCTTY);
     if (this->serial_fd < 0) {
       throw std::runtime_error("Cannot open " + device);
     }
