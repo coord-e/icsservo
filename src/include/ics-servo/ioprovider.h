@@ -46,6 +46,7 @@ public:
 
 private:
   void set_gpio_value(bool state);
+  void write_serial(std::uint8_t const* ptr, std::size_t len);
 };
 
 }

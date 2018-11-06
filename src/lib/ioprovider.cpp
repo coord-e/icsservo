@@ -114,4 +114,10 @@ ServoID IOProvider::get_id() {
   return id_recv;
 }
 
+void IOProvider::write_serial(std::uint8_t const* ptr, std::size_t len) {
+  if(::write(this->serial_fd, ptr, len) < 0) {
+    throw std::runtime_error("Cannot write to serial device file");
+  }
+}
+
 }
