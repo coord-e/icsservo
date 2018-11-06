@@ -109,7 +109,7 @@ ServoID IOProvider::get_id() {
 
   this->send(std::cbegin(command), std::cend(command));
   std::vector<std::uint8_t> recv_buf(5);
-  this->recv(5, std::begin(recv_buf));
+  this->recv(std::begin(recv_buf), 5);
   ServoID id_recv = recv_buf[4] & 0x1F;
   return id_recv;
 }
@@ -117,6 +117,12 @@ ServoID IOProvider::get_id() {
 void IOProvider::write_serial(std::uint8_t const* ptr, std::size_t len) {
   if(::write(this->serial_fd, ptr, len) < 0) {
     throw std::runtime_error("Cannot write to serial device file");
+  }
+}
+
+void IOProvider::read_serial(std::uint8_t* ptr, std::size_t len) {
+  if(::read(this->serial_fd, ptr, len) < 0) {
+    throw std::runtime_error("Cannot read from serial device file");
   }
 }
 

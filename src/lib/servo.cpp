@@ -41,7 +41,7 @@ std::uint8_t Servo::read_param(Subcommand sc) {
 
   this->provider->send(std::cbegin(command), std::cend(command));
   std::vector<std::uint8_t> recv(3);
-  this->provider->recv(3, std::begin(recv));
+  this->provider->recv(std::begin(recv), 3);
   return recv[3];
 }
 
@@ -112,7 +112,7 @@ Servo::Position Servo::get_position() {
 
   this->provider->send(std::cbegin(command), std::cend(command));
   std::vector<std::uint8_t> recv(3);
-  this->provider->recv(3, std::begin(recv));
+  this->provider->recv(std::begin(recv), 3);
   InternalPosition ipos = ((recv[2] << 7) & 0x3F80) + (recv[3] & 0x007F);
   return this->internal_to_rad(ipos);
 }

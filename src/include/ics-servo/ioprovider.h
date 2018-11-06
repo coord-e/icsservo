@@ -40,11 +40,18 @@ public:
     this->write_serial(buf.data(), buf.size());
   }
 
-  template<typename OutputIterator>
-  void recv(std::size_t n, OutputIterator first) {
+  void recv(std::uint8_t* buf, std::size_t len) {
     this->set_gpio_value(false); // recv
-    // ditto
-    std::copy_n(std::istreambuf_iterator<char>(this->serial_stream), n, first);
+    this->read_serial(buf, len);
+  }
+
+  template<typename OutputIterator>
+  void recv(OutputIterator first, std::size_t len) {
+    this->set_gpio_value(false); // recv
+
+    std::vector<std::uint8_t> buf (len);
+
+    this->read_serial(buf.data(), len);
   }
 
   void set_id(ServoID);
@@ -53,6 +60,7 @@ public:
 private:
   void set_gpio_value(bool state);
   void write_serial(std::uint8_t const* ptr, std::size_t len);
+  void read_serial(std::uint8_t* ptr, std::size_t len);
 };
 
 }
