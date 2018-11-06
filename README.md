@@ -35,7 +35,7 @@ stty -F /dev/serial0 115200 raw parenb
 ```python
 from icsservo import IOProvider
 
-with IOProvider(device="/dev/ttyS0", en_idx=23) as io:
+with IOProvider(device="/dev/serial0", en_idx=23) as io:
   servo = io.servo(1) # Servo with ID 1
   servo.set_position(3.14 / 2)
 ```
