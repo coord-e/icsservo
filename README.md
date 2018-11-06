@@ -13,6 +13,23 @@ ICSServo: ICS serial servo driver library
 pip install icsservo
 ```
 
+## Serial port setup
+
+### Raspberry Pi 3 B
+
+```shell
+# Disable Bluetooth and Enable PL011 uart.
+# MiniUART cannot be used because it does not support parity.
+# https://www.raspberrypi.org/documentation/configuration/uart.md
+echo 'dtoverlay=pi3-miniuart-bt' | sudo tee -a /boot/config.txt
+
+# Reboot to apply changes
+sudo reboot
+
+# Configure serial port with stty(1)
+stty -F /dev/serial0 115200 raw parenb
+```
+
 ## Usage
 
 ```python
