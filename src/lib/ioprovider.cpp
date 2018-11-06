@@ -17,7 +17,10 @@ namespace ICSServo {
 IOProvider::IOProvider(std::string const& device, std::size_t en_idx_, speed_t speed)
   : en_idx(en_idx_), is_closed(false)
   {
-    this->serial_stream.open(device, std::ios::binary | std::ios::in | std::ios::out);
+    this->serial_fd = ::open(device, O_RDWR);
+    if (this->serial_fd < 0) {
+      throw std::runtime_error("Cannot open " + device);
+    }
 
     auto const export_fd = ::open("/sys/class/gpio/export", O_RDWR);
     if(export_fd < 0) {
@@ -63,7 +66,7 @@ IOProvider::~IOProvider() {
 void IOProvider::close() {
   if (!this->is_closed) {
     ::close(this->gpio_fd);
-    this->serial_stream.close();
+    ::close(this->serial_fd);
     auto const export_fd = ::open("/sys/class/gpio/unexport", O_RDWR);
     if(export_fd < 0) {
       throw std::runtime_error("Cannot open /sys/class/gpio/unexport");

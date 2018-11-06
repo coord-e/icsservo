@@ -14,8 +14,7 @@
 namespace ICSServo {
 
 class IOProvider {
-  std::fstream serial_stream;
-  int gpio_fd;
+  int gpio_fd, serial_fd;
   std::size_t en_idx;
   bool is_closed;
 
