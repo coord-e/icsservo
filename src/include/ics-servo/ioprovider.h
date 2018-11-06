@@ -33,11 +33,9 @@ public:
 
   template<typename InputIterator>
   void send(InputIterator first, InputIterator last) {
-    this->set_gpio_value(true); // send
-
     std::vector<std::uint8_t> buf(first, last);
 
-    this->write_serial(buf.data(), buf.size());
+    this->send(buf.data(), buf.size());
   }
 
   void recv(std::uint8_t* buf, std::size_t len) {
@@ -47,11 +45,9 @@ public:
 
   template<typename OutputIterator>
   void recv(OutputIterator first, std::size_t len) {
-    this->set_gpio_value(false); // recv
-
     std::vector<std::uint8_t> buf (len);
 
-    this->read_serial(buf.data(), len);
+    this->recv(buf.data(), len);
   }
 
   void set_id(ServoID);
