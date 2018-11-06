@@ -8,35 +8,55 @@
 #include <iterator>
 #include <termios.h>
 #include <algorithm>
+#include <vector>
+
+#include "ics-servo/ics.h"
 
 namespace ICSServo {
 
 class IOProvider {
-  std::basic_fstream<std::uint8_t> serial_stream;
-  int gpio_fd;
+  int gpio_fd, serial_fd;
   std::size_t en_idx;
+  bool is_closed;
 
 public:
-  IOProvider(std::string const& device, speed_t speed, std::size_t en_pin_idx);
+  // The real baud rate of B38400 can be configured using setserial(8)
+  IOProvider(std::string const& device, std::size_t en_pin_idx, speed_t speed = B38400);
   ~IOProvider();
 
   void close();
 
+  void send(std::uint8_t const* buf, std::size_t len) {
+    this->set_gpio_value(true); // send
+    this->write_serial(buf, len);
+  }
+
   template<typename InputIterator>
   void send(InputIterator first, InputIterator last) {
-    this->set_gpio_value(true); // send
-    std::copy(first, last, std::ostreambuf_iterator<std::uint8_t>(this->serial_stream));
-    this->serial_stream.flush();
+    std::vector<std::uint8_t> buf(first, last);
+
+    this->send(buf.data(), buf.size());
+  }
+
+  void recv(std::uint8_t* buf, std::size_t len) {
+    this->set_gpio_value(false); // recv
+    this->read_serial(buf, len);
   }
 
   template<typename OutputIterator>
-  void recv(std::size_t n, OutputIterator first) {
-    this->set_gpio_value(false); // recv
-    std::copy_n(std::istreambuf_iterator<std::uint8_t>(this->serial_stream), n, first);
+  void recv(OutputIterator first, std::size_t len) {
+    std::vector<std::uint8_t> buf (len);
+
+    this->recv(buf.data(), len);
   }
+
+  void set_id(ServoID);
+  ServoID get_id();
 
 private:
   void set_gpio_value(bool state);
+  void write_serial(std::uint8_t const* ptr, std::size_t len);
+  void read_serial(std::uint8_t* ptr, std::size_t len);
 };
 
 }

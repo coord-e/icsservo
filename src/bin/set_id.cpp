@@ -1,11 +1,11 @@
-#include "ics-servo/servo.h"
+#include "ics-servo/ics.h"
 
 #include <iostream>
 
 int main(int argc, char **argv) {
 
   if (argc != 4) {
-    std::cerr << "servo <device> <en_pin> <id>" << std::endl;
+    std::cerr << "set_id <device> <en_pin> <id>" << std::endl;
     return 1;
   }
 
@@ -14,13 +14,6 @@ int main(int argc, char **argv) {
   const ICSServo::ServoID id  = static_cast<ICSServo::ServoID>(strtol(argv[3], nullptr, 0));
 
   auto sa = std::make_shared<ICSServo::IOProvider>(device, en_pin);
-  auto servo = ICSServo::Servo(sa, id);
-
-  while(true) {
-    double rad;
-    std::cout << " (rad)  > ";
-    std::cin >> rad;
-
-    servo.set_position(rad);
-  }
+  sa->set_id(id);
+  sa->close();
 }

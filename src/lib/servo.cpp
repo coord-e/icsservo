@@ -30,7 +30,7 @@ void Servo::write_param(Subcommand sc, std::uint8_t data) {
     data
   };
 
-  this->provider->send(std::cbegin(command), std::cend(command));
+  this->provider->send(command, 3);
 }
 
 std::uint8_t Servo::read_param(Subcommand sc) {
@@ -39,9 +39,9 @@ std::uint8_t Servo::read_param(Subcommand sc) {
     static_cast<std::uint8_t>(sc)
   };
 
-  this->provider->send(std::cbegin(command), std::cend(command));
+  this->provider->send(command, 2);
   std::vector<std::uint8_t> recv(3);
-  this->provider->recv(3, std::begin(recv));
+  this->provider->recv(recv.data(), 3);
   return recv[3];
 }
 
@@ -59,7 +59,7 @@ void Servo::set_position(Position pos) {
     static_cast<std::uint8_t>(ipos & 0x007F)
   };
 
-  this->provider->send(std::cbegin(command), std::cend(command));
+  this->provider->send(command, 3);
 }
 
 void Servo::set_free() {
@@ -69,7 +69,7 @@ void Servo::set_free() {
     0
   };
 
-  this->provider->send(std::cbegin(command), std::cend(command));
+  this->provider->send(command, 3);
 }
 
 void Servo::set_stretch(std::uint8_t stretch) {
@@ -110,11 +110,12 @@ Servo::Position Servo::get_position() {
     static_cast<std::uint8_t>(Subcommand::TCH)
   };
 
-  this->provider->send(std::cbegin(command), std::cend(command));
+  this->provider->send(command, 2);
   std::vector<std::uint8_t> recv(3);
-  this->provider->recv(3, std::begin(recv));
+  this->provider->recv(recv.data(), 3);
   InternalPosition ipos = ((recv[2] << 7) & 0x3F80) + (recv[3] & 0x007F);
   return this->internal_to_rad(ipos);
 }
+
 
 }

@@ -6,11 +6,9 @@
 #include <cmath>
 #include <memory>
 
-#include "ics-servo/ioprovider.h"
+#include "ics-servo/ics.h"
 
 namespace ICSServo {
-
-using ServoID = std::uint8_t;
 
 enum class Subcommand {
   EEPROM = 0x00,

@@ -1,0 +1,21 @@
+language: python
+python:
+  - '3.5'
+addons:
+  apt:
+    sources:
+      - ubuntu-toolchain-r-test
+    packages:
+      - g++-5
+      - build-essential
+      - cmake
+env:
+  - CXX=g++-5
+script:
+  - pip install -e .
+deploy:
+  provider: pypi
+  user: "${PYPI_USERNAME}"
+  password: "${PYPI_PASSWORD}"
+  on:
+    tags: true
