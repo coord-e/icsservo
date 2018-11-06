@@ -8,6 +8,7 @@
 #include <iterator>
 #include <termios.h>
 #include <algorithm>
+#include <vector>
 
 #include "ics-servo/ics.h"
 
@@ -25,13 +26,18 @@ public:
 
   void close();
 
+  void send(std::uint8_t const* buf, std::size_t len) {
+    this->set_gpio_value(true); // send
+    this->write_serial(buf, len);
+  }
+
   template<typename InputIterator>
   void send(InputIterator first, InputIterator last) {
     this->set_gpio_value(true); // send
-    // This should be ostreambuf_iterator<uint8_t>, however it causes runtime error
-    // The code below works where sizeof(char) == 1, otherwise it may cause compilation error
-    std::copy(first, last, std::ostreambuf_iterator<char>(this->serial_stream));
-    this->serial_stream.flush();
+
+    std::vector<std::uint8_t> buf(first, last);
+
+    this->write_serial(buf.data(), buf.size());
   }
 
   template<typename OutputIterator>
