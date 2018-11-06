@@ -17,28 +17,7 @@ namespace ICSServo {
 IOProvider::IOProvider(std::string const& device, std::size_t en_idx_, speed_t speed)
   : en_idx(en_idx_), is_closed(false)
   {
-    const int serial_fd = ::open(device.c_str(), O_RDWR);
-    if (serial_fd < 0) {
-      throw std::runtime_error("Cannot open " + device);
-    }
-
-    termios tio;
-    tio.c_cflag += CREAD;
-    tio.c_cflag += CLOCAL;
-    tio.c_cflag += CS8;
-
-    cfsetispeed(&tio, speed);
-    cfsetospeed(&tio, speed);
-
-    cfmakeraw(&tio);
-
-    tcsetattr(serial_fd, TCSANOW, &tio);
-
-    if(ioctl(serial_fd, TCSETS, &tio) < 0) {
-      throw std::runtime_error("Cannot set serial port setting to " + device);
-    }
-    ::close(serial_fd);
-    this->serial_stream.open(device);
+    this->serial_stream.open(device, std::ios::binary | std::ios::in | std::ios::out);
 
     auto const export_fd = ::open("/sys/class/gpio/export", O_RDWR);
     if(export_fd < 0) {
