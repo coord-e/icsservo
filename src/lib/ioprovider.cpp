@@ -17,7 +17,10 @@ namespace ICSServo {
 IOProvider::IOProvider(std::string const& device, std::size_t en_idx_, speed_t speed)
   : en_idx(en_idx_), is_closed(false)
   {
-    this->serial_stream.open(device, std::ios::binary | std::ios::in | std::ios::out);
+    this->serial_fd = ::open(device.c_str(), O_RDWR);
+    if (this->serial_fd < 0) {
+      throw std::runtime_error("Cannot open " + device);
+    }
 
     auto const export_fd = ::open("/sys/class/gpio/export", O_RDWR);
     if(export_fd < 0) {
@@ -63,7 +66,7 @@ IOProvider::~IOProvider() {
 void IOProvider::close() {
   if (!this->is_closed) {
     ::close(this->gpio_fd);
-    this->serial_stream.close();
+    ::close(this->serial_fd);
     auto const export_fd = ::open("/sys/class/gpio/unexport", O_RDWR);
     if(export_fd < 0) {
       throw std::runtime_error("Cannot open /sys/class/gpio/unexport");
@@ -93,7 +96,7 @@ void IOProvider::set_id(ServoID id_in) {
     0x01,
   };
 
-  this->send(std::cbegin(command), std::cend(command));
+  this->send(command, 4);
 }
 
 ServoID IOProvider::get_id() {
@@ -104,11 +107,23 @@ ServoID IOProvider::get_id() {
     0x00,
   };
 
-  this->send(std::cbegin(command), std::cend(command));
+  this->send(command, 4);
   std::vector<std::uint8_t> recv_buf(5);
-  this->recv(5, std::begin(recv_buf));
+  this->recv(recv_buf.data(), 5);
   ServoID id_recv = recv_buf[4] & 0x1F;
   return id_recv;
+}
+
+void IOProvider::write_serial(std::uint8_t const* ptr, std::size_t len) {
+  if(::write(this->serial_fd, ptr, len) < 0) {
+    throw std::runtime_error("Cannot write to serial device file");
+  }
+}
+
+void IOProvider::read_serial(std::uint8_t* ptr, std::size_t len) {
+  if(::read(this->serial_fd, ptr, len) < 0) {
+    throw std::runtime_error("Cannot read from serial device file");
+  }
 }
 
 }

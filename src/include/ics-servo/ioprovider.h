@@ -8,14 +8,14 @@
 #include <iterator>
 #include <termios.h>
 #include <algorithm>
+#include <vector>
 
 #include "ics-servo/ics.h"
 
 namespace ICSServo {
 
 class IOProvider {
-  std::fstream serial_stream;
-  int gpio_fd;
+  int gpio_fd, serial_fd;
   std::size_t en_idx;
   bool is_closed;
 
@@ -26,20 +26,28 @@ public:
 
   void close();
 
+  void send(std::uint8_t const* buf, std::size_t len) {
+    this->set_gpio_value(true); // send
+    this->write_serial(buf, len);
+  }
+
   template<typename InputIterator>
   void send(InputIterator first, InputIterator last) {
-    this->set_gpio_value(true); // send
-    // This should be ostreambuf_iterator<uint8_t>, however it causes runtime error
-    // The code below works where sizeof(char) == 1, otherwise it may cause compilation error
-    std::copy(first, last, std::ostreambuf_iterator<char>(this->serial_stream));
-    this->serial_stream.flush();
+    std::vector<std::uint8_t> buf(first, last);
+
+    this->send(buf.data(), buf.size());
+  }
+
+  void recv(std::uint8_t* buf, std::size_t len) {
+    this->set_gpio_value(false); // recv
+    this->read_serial(buf, len);
   }
 
   template<typename OutputIterator>
-  void recv(std::size_t n, OutputIterator first) {
-    this->set_gpio_value(false); // recv
-    // ditto
-    std::copy_n(std::istreambuf_iterator<char>(this->serial_stream), n, first);
+  void recv(OutputIterator first, std::size_t len) {
+    std::vector<std::uint8_t> buf (len);
+
+    this->recv(buf.data(), len);
   }
 
   void set_id(ServoID);
@@ -47,6 +55,8 @@ public:
 
 private:
   void set_gpio_value(bool state);
+  void write_serial(std::uint8_t const* ptr, std::size_t len);
+  void read_serial(std::uint8_t* ptr, std::size_t len);
 };
 
 }
