@@ -96,7 +96,7 @@ void IOProvider::set_id(ServoID id_in) {
     0x01,
   };
 
-  this->send(std::cbegin(command), std::cend(command));
+  this->send(command, 4);
 }
 
 ServoID IOProvider::get_id() {
@@ -107,9 +107,9 @@ ServoID IOProvider::get_id() {
     0x00,
   };
 
-  this->send(std::cbegin(command), std::cend(command));
+  this->send(command, 4);
   std::vector<std::uint8_t> recv_buf(5);
-  this->recv(std::begin(recv_buf), 5);
+  this->recv(recv_buf.data(), 5);
   ServoID id_recv = recv_buf[4] & 0x1F;
   return id_recv;
 }
