@@ -19,6 +19,15 @@ void IOProvider::init_serial(std::string const& device) {
     if (this->serial_fd < 0) {
       throw std::runtime_error("Cannot open " + device);
     }
+
+    termios conf;
+    conf->c_iflag &= ~(IGNBRK | BRKINT | PARMRK | ISTRIP | INLCR | IGNCR | ICRNL | IXON);
+    conf->c_oflag &= ~OPOST;
+    conf->c_lflag &= ~(ECHO | ECHONL | ICANON | ISIG | IEXTEN);
+    conf->c_cflag &= ~CSIZE;
+    conf->c_cflag |= CS8;
+    conf->c_cflag |= PARENB;
+    tcsetattr(this->serial_fd, TCSANOW, &conf);
 }
 
 void IOProvider::init_gpio_export() {
