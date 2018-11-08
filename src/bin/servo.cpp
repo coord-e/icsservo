@@ -9,10 +9,7 @@
 std::atomic<bool> quit(false);    // signal flag
 
 void on_signal(int);
-void on_signal(int)
-{
-  quit.store(true);
-}
+void register_signal(int);
 
 int main(int argc, char **argv) {
 
@@ -28,11 +25,9 @@ int main(int argc, char **argv) {
   auto io = std::make_shared<ICSServo::IOProvider>(device, en_pin);
   auto servo = ICSServo::Servo(io, id);
 
-  struct sigaction sa;
-  memset( &sa, 0, sizeof(sa) );
-  sa.sa_handler = on_signal;
-  sigfillset(&sa.sa_mask);
-  sigaction(SIGINT, &sa, NULL);
+  register_signal(SIGINT);
+  register_signal(SIGTERM);
+  register_signal(SIGQUIT);
 
   while(true) {
     double rad;
@@ -43,4 +38,17 @@ int main(int argc, char **argv) {
 
     if(quit.load()) break;
   }
+}
+
+void on_signal(int)
+{
+  quit.store(true);
+}
+
+void register_signal(int sig) {
+  struct sigaction sa;
+  memset( &sa, 0, sizeof(sa) );
+  sa.sa_handler = on_signal;
+  sigfillset(&sa.sa_mask);
+  sigaction(sig, &sa, NULL);
 }
