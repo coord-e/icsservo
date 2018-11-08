@@ -12,6 +12,13 @@
 #include <iostream>
 #include <vector>
 
+#ifdef B115200
+#define HAS_B115200
+#else
+// serial_struct, ASYNC_SPD_VHI
+#include <linux/serial.h>
+#endif
+
 namespace ICSServo {
 
 void IOProvider::init_serial(std::string const& device) {
@@ -28,13 +35,21 @@ void IOProvider::init_serial(std::string const& device) {
     conf->c_cflag |= CS8;
     conf->c_cflag |= PARENB;
 
-#ifdef B115200
+#ifdef HAS_B115200
     const auto baud = B115200;
 #else
-    // B115200 is non-standard
-    // In an environment where there is no B115200, you have to set spd_vhi with setserial(8)
+    // In an environment where there is no B115200,
+    // We have to set spd_vhi flag to use 115200 instead of 38400
+
     const auto baud = B38400;
+
+    serial_struct serinfo;
+    serinfo.flags |= ASYNC_SPD_VHI;
+    if (ioctl(this->serial_fd, TIOCSSERIAL, &serinfo) < 0) {
+      throw std::runtime_error("Cannot set serial port configuration to " + device);
+    }
 #endif
+
     cfsetispeed(&conf, baud);
     cfsetospeed(&conf, baud);
 
