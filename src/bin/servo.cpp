@@ -33,6 +33,7 @@ int main(int argc, char **argv) {
     double rad;
     std::cout << " (rad)  > ";
     std::cin >> rad;
+    if(std::cin.eof()) break;
 
     servo.set_position(rad);
 
