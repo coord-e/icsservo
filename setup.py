@@ -79,7 +79,7 @@ with open("README.md") as f:
 
 setup(
         name='icsservo',
-        version='0.1',
+        version='0.2',
         author='coord.e',
         author_email='me@coord-e.com',
         description='ICSServo: ICS serial servo driver library',
