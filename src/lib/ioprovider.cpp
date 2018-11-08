@@ -28,12 +28,14 @@ void IOProvider::init_serial(std::string const& device) {
     }
 
     termios conf;
-    conf->c_iflag &= ~(IGNBRK | BRKINT | PARMRK | ISTRIP | INLCR | IGNCR | ICRNL | IXON);
-    conf->c_oflag &= ~OPOST;
-    conf->c_lflag &= ~(ECHO | ECHONL | ICANON | ISIG | IEXTEN);
-    conf->c_cflag &= ~CSIZE;
-    conf->c_cflag |= CS8;
-    conf->c_cflag |= PARENB;
+    conf.c_iflag = 0;
+    conf.c_oflag &= ~static_cast<unsigned>(OPOST);
+    conf.c_lflag &= ~static_cast<unsigned>(ISIG | ICANON | TOSTOP | FLUSHO | NOFLSH | XCASE | EXTPROC);
+    conf.c_cflag |= CS8 | CREAD | CLOCAL | PARENB;
+    conf.c_cflag &= ~static_cast<unsigned>(PARODD | CMSPAR);
+
+    conf.c_cc[VMIN] = 1;
+    conf.c_cc[VTIME] = 0;
 
 #ifdef HAS_B115200
     const auto baud = B115200;
