@@ -20,6 +20,7 @@ class IOProvider {
   int gpio_fd, serial_fd;
   std::size_t en_idx;
   bool is_closed;
+  termios prev_term_config;
 
 public:
 

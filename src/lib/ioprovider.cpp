@@ -27,6 +27,10 @@ void IOProvider::init_serial(std::string const& device) {
       throw std::runtime_error("Cannot open " + device);
     }
 
+    if (tcgetattr(this->serial_fd, &this->prev_term_config) < 0) {
+      throw std::runtime_error("Cannot get serial port configuration from " + device);
+    }
+
     termios conf;
     conf.c_iflag = 0;
     conf.c_oflag &= ~static_cast<unsigned>(OPOST);
@@ -128,7 +132,12 @@ IOProvider::~IOProvider() {
 void IOProvider::close() {
   if (!this->is_closed) {
     ::close(this->gpio_fd);
+
+    if (tcsetattr(this->serial_fd, TCSANOW, &this->prev_term_config) < 0) {
+      throw std::runtime_error("Cannot restore serial port configuration");
+    }
     ::close(this->serial_fd);
+
     auto const export_fd = ::open("/sys/class/gpio/unexport", O_RDWR);
     if(export_fd < 0) {
       throw std::runtime_error("Cannot open /sys/class/gpio/unexport");
