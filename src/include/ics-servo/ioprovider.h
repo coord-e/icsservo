@@ -23,8 +23,8 @@ class IOProvider {
 
 public:
 
-  template <class Rep, class Period>
-  IOProvider(std::string const& device, std::size_t en_idx_, const std::chrono::duration<Rep, Period>& export_delay)
+  template <class Rep = std::chrono::milliseconds::rep, class Period = std::chrono::milliseconds::period>
+  IOProvider(std::string const& device, std::size_t en_idx_, const std::chrono::duration<Rep, Period>& export_delay = std::chrono::milliseconds(100))
     : en_idx(en_idx_), is_closed(false)
   {
     this->init_serial(device);
@@ -33,11 +33,6 @@ public:
     std::this_thread::sleep_for(export_delay);
 
     this->init_gpio_setup();
-  }
-
-  IOProvider(std::string const& device, std::size_t en_idx_)
-  {
-    IOProvider(device, en_idx_, std::chrono::milliseconds(100));
   }
 
   ~IOProvider();
