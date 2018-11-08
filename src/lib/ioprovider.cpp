@@ -53,7 +53,9 @@ void IOProvider::init_serial(std::string const& device) {
     cfsetispeed(&conf, baud);
     cfsetospeed(&conf, baud);
 
-    tcsetattr(this->serial_fd, TCSANOW, &conf);
+    if (tcsetattr(this->serial_fd, TCSANOW, &conf) < 0) {
+      throw std::runtime_error("Cannot set serial port configuration to " + device);
+    }
 }
 
 void IOProvider::init_gpio_export() {
