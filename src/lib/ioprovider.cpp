@@ -11,6 +11,8 @@
 #include <cstdlib>
 #include <iostream>
 #include <vector>
+#include <chrono>
+#include <thread>
 
 namespace ICSServo {
 
@@ -35,6 +37,8 @@ IOProvider::IOProvider(std::string const& device, std::size_t en_idx_)
     ::close(export_fd);
 
     std::string const gpio_base = "/sys/class/gpio/gpio" + std::to_string(this->en_idx);
+
+    std::this_thread::sleep_for(std::chrono::seconds(1));
     auto const direction_path = gpio_base + "/direction";
     auto const direction_fd = ::open(direction_path.c_str(), O_RDWR);
     if(direction_fd < 0) {
