@@ -46,6 +46,9 @@ void IOProvider::init_serial(std::string const& device) {
     const auto baud = B38400;
 
     serial_struct serinfo;
+    if (ioctl(fd, TIOCGSERIAL, &serinfo) < 0) {
+      throw std::runtime_error("Cannot get serial port configuration from " + device);
+    }
     serinfo.flags |= ASYNC_SPD_VHI;
     if (ioctl(this->serial_fd, TIOCSSERIAL, &serinfo) < 0) {
       throw std::runtime_error("Cannot set serial port configuration to " + device);
