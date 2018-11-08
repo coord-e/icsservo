@@ -79,7 +79,7 @@ with open("README.md") as f:
 
 setup(
         name='icsservo',
-        version='0.1',
+        version='0.2',
         author='coord.e',
         author_email='me@coord-e.com',
         description='ICSServo: ICS serial servo driver library',
@@ -88,7 +88,7 @@ setup(
         cmdclass=dict(build_ext=CMakeBuild),
         zip_safe=False,
         classifiers=[
-            'Development Status :: 2 - Pre-Alpha',
+            'Development Status :: 4 - Beta',
             'Intended Audience :: Developers',
             'Environment :: Other Environment',
             'License :: OSI Approved :: MIT License',

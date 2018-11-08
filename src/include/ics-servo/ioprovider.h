@@ -9,6 +9,8 @@
 #include <termios.h>
 #include <algorithm>
 #include <vector>
+#include <chrono>
+#include <thread>
 
 #include "ics-servo/ics.h"
 
@@ -18,10 +20,22 @@ class IOProvider {
   int gpio_fd, serial_fd;
   std::size_t en_idx;
   bool is_closed;
+  termios prev_term_config;
 
 public:
-  // The real baud rate of B38400 can be configured using setserial(8)
-  IOProvider(std::string const& device, std::size_t en_pin_idx, speed_t speed = B38400);
+
+  template <class Rep = std::chrono::milliseconds::rep, class Period = std::chrono::milliseconds::period>
+  IOProvider(std::string const& device, std::size_t en_idx_, const std::chrono::duration<Rep, Period>& export_delay = std::chrono::milliseconds(100))
+    : en_idx(en_idx_), is_closed(false), prev_term_config()
+  {
+    this->init_serial(device);
+    this->init_gpio_export();
+
+    std::this_thread::sleep_for(export_delay);
+
+    this->init_gpio_setup();
+  }
+
   ~IOProvider();
 
   void close();
@@ -54,6 +68,10 @@ public:
   ServoID get_id();
 
 private:
+  void init_serial(std::string const&);
+  void init_gpio_export();
+  void init_gpio_setup();
+
   void set_gpio_value(bool state);
   void write_serial(std::uint8_t const* ptr, std::size_t len);
   void read_serial(std::uint8_t* ptr, std::size_t len);

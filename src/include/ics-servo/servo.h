@@ -10,6 +10,9 @@
 
 namespace ICSServo {
 
+template <class T>
+static constexpr T pi = static_cast<T>(3.141592653589793238462643383279502884e+00);
+
 enum class Subcommand {
   EEPROM = 0x00,
   STRC = 0x01,
@@ -20,15 +23,15 @@ enum class Subcommand {
 };
 
 class Servo {
-  ServoID id;
   std::shared_ptr<IOProvider> provider;
+  ServoID id;
 
 public:
   Servo(std::shared_ptr<IOProvider>, ServoID);
 
   using Position = double;
-  static constexpr Position max_pos = M_PI;
-  static constexpr Position min_pos = -M_PI;
+  static constexpr Position max_pos = pi<Position>;
+  static constexpr Position min_pos = -pi<Position>;
 
   void set_position(Position);
   void set_free();
