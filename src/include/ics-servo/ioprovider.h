@@ -37,7 +37,7 @@ public:
 
   IOProvider(std::string const& device, std::size_t en_idx_)
   {
-    IOProvider(device, en_idx, std::chrono::seconds(1));
+    IOProvider(device, en_idx, std::chrono::milliseconds(100));
   }
 
   ~IOProvider();

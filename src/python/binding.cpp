@@ -52,7 +52,7 @@ PYBIND11_MODULE(icsservo, m) {
     .def("get_position", &::ICSServo::Servo::get_position);
 
   py::class_<Adaptor::IOProvider>(m, "IOProvider")
-    .def(py::init<std::string, std::size_t, float>(), py::arg("device"), py::arg("en_idx"), py::arg("export_delay") = 1.0)
+    .def(py::init<std::string, std::size_t, float>(), py::arg("device"), py::arg("en_idx"), py::arg("export_delay") = 0.1)
     .def("servo", &Adaptor::IOProvider::servo)
     .def("set_id", &Adaptor::IOProvider::set_id)
     .def("get_id", &Adaptor::IOProvider::get_id)
