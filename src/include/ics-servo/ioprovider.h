@@ -22,16 +22,22 @@ class IOProvider {
   bool is_closed;
 
 public:
+
   template <class Rep, class Period>
-  IOProvider(std::string const& device, std::size_t en_idx_, const std::chrono::duration<Rep, Period>& export_delay = std::chrono::seconds(1))
+  IOProvider(std::string const& device, std::size_t en_idx_, const std::chrono::duration<Rep, Period>& export_delay)
     : en_idx(en_idx_), is_closed(false)
-    {
-      this->init_serial(device);
-      this->init_gpio_export();
+  {
+    this->init_serial(device);
+    this->init_gpio_export();
 
-      std::this_thread::sleep_for(export_delay);
+    std::this_thread::sleep_for(export_delay);
 
-      this->init_gpio_setup();
+    this->init_gpio_setup();
+  }
+
+  IOProvider(std::string const& device, std::size_t en_idx_)
+  {
+    IOProvider(device, en_idx, std::chrono::seconds(1));
   }
 
   ~IOProvider();
