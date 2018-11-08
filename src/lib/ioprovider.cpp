@@ -64,7 +64,16 @@ void IOProvider::init_serial(std::string const& device) {
       throw std::runtime_error("Cannot get serial port configuration from " + device);
     }
 
-    if (memcmp (&conf, &new_conf, sizeof(conf)) != 0) {
+    // Not comparing the entire c_cc, because it differs in my environtment...
+    // That's also a reason why memcmp isn't used here
+    if (conf.c_iflag != new_conf.c_iflag ||
+        conf.c_oflag != new_conf.c_oflag ||
+        conf.c_cflag != new_conf.c_cflag ||
+        conf.c_lflag != new_conf.c_lflag ||
+        conf.c_cc[VMIN] != new_conf.c_cc[VMIN] ||
+        conf.c_cc[VTIME] != new_conf.c_cc[VTIME] ||
+        conf.c_ispeed != new_conf.c_ispeed ||
+        conf.c_ospeed != new_conf.c_ospeed) {
       throw std::runtime_error("Cannot set all serial port configuration to " + device);
     }
 }
