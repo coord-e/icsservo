@@ -47,11 +47,11 @@ void IOProvider::init_serial(std::string const& device) {
 
     serial_struct serinfo;
     if (ioctl(fd, TIOCGSERIAL, &serinfo) < 0) {
-      throw std::runtime_error("Cannot get serial port configuration from " + device);
+      throw std::runtime_error("Cannot get serial port configuration (TIOCGSERIAL) from " + device);
     }
     serinfo.flags |= ASYNC_SPD_VHI;
     if (ioctl(this->serial_fd, TIOCSSERIAL, &serinfo) < 0) {
-      throw std::runtime_error("Cannot set serial port configuration to " + device);
+      throw std::runtime_error("Cannot set serial port configuration (TIOCSSERIAL) to " + device);
     }
 #endif
 
