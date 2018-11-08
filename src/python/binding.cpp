@@ -10,7 +10,8 @@ class IOProvider {
   std::shared_ptr<::ICSServo::IOProvider> provider;
 
 public:
-  IOProvider(std::string const& device, std::size_t en_pin_idx, float export_delay) : provider(std::make_shared<::ICSServo::IOProvider>(device, en_pin_idx, std::chrono::seconds(export_delay))) {}
+  IOProvider(std::string const& device, std::size_t en_pin_idx, float export_delay)
+    : provider(std::make_shared<::ICSServo::IOProvider>(device, en_pin_idx, std::chrono::nanoseconds(static_cast<long long>(export_delay * 1e9)))) {}
 
   ::ICSServo::Servo servo(::ICSServo::ServoID id) {
     return ::ICSServo::Servo(this->provider, id);
@@ -51,7 +52,7 @@ PYBIND11_MODULE(icsservo, m) {
     .def("get_position", &::ICSServo::Servo::get_position);
 
   py::class_<Adaptor::IOProvider>(m, "IOProvider")
-    .def(py::init<std::string, std::size_t>(), py::arg("device"), py::arg("en_idx"), py::arg("export_delay") = 1.0)
+    .def(py::init<std::string, std::size_t, float>(), py::arg("device"), py::arg("en_idx"), py::arg("export_delay") = 1.0)
     .def("servo", &Adaptor::IOProvider::servo)
     .def("set_id", &Adaptor::IOProvider::set_id)
     .def("get_id", &Adaptor::IOProvider::get_id)
