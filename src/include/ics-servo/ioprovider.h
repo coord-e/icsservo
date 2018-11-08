@@ -20,12 +20,13 @@ class IOProvider {
   int gpio_fd, serial_fd;
   std::size_t en_idx;
   bool is_closed;
+  termios prev_term_config;
 
 public:
 
   template <class Rep = std::chrono::milliseconds::rep, class Period = std::chrono::milliseconds::period>
   IOProvider(std::string const& device, std::size_t en_idx_, const std::chrono::duration<Rep, Period>& export_delay = std::chrono::milliseconds(100))
-    : en_idx(en_idx_), is_closed(false)
+    : en_idx(en_idx_), is_closed(false), prev_term_config()
   {
     this->init_serial(device);
     this->init_gpio_export();

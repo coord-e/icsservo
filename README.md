@@ -25,9 +25,6 @@ echo 'dtoverlay=pi3-miniuart-bt' | sudo tee -a /boot/config.txt
 
 # Reboot to apply changes
 sudo reboot
-
-# Configure serial port with stty(1)
-stty -F /dev/serial0 115200 raw parenb
 ```
 
 ## Usage

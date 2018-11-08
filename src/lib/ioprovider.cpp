@@ -12,12 +12,76 @@
 #include <iostream>
 #include <vector>
 
+#ifdef B115200
+#define HAS_B115200
+#else
+// serial_struct, ASYNC_SPD_VHI
+#include <linux/serial.h>
+#endif
+
 namespace ICSServo {
 
 void IOProvider::init_serial(std::string const& device) {
     this->serial_fd = ::open(device.c_str(), O_RDWR | O_NOCTTY);
     if (this->serial_fd < 0) {
       throw std::runtime_error("Cannot open " + device);
+    }
+
+    if (tcgetattr(this->serial_fd, &this->prev_term_config) < 0) {
+      throw std::runtime_error("Cannot get serial port configuration from " + device);
+    }
+
+    termios conf;
+    conf.c_iflag = 0;
+    conf.c_oflag &= ~static_cast<unsigned>(OPOST);
+    conf.c_lflag &= ~static_cast<unsigned>(ISIG | ICANON | TOSTOP | FLUSHO | NOFLSH | XCASE | EXTPROC);
+    conf.c_cflag |= CS8 | CREAD | CLOCAL | PARENB;
+    conf.c_cflag &= ~static_cast<unsigned>(PARODD | CMSPAR);
+
+    conf.c_cc[VMIN] = 1;
+    conf.c_cc[VTIME] = 0;
+
+#ifdef HAS_B115200
+    const auto baud = B115200;
+#else
+    // In an environment where there is no B115200,
+    // We have to set spd_vhi flag to use 115200 instead of 38400
+
+    const auto baud = B38400;
+
+    serial_struct serinfo;
+    if (ioctl(fd, TIOCGSERIAL, &serinfo) < 0) {
+      throw std::runtime_error("Cannot get serial port configuration (TIOCGSERIAL) from " + device);
+    }
+    serinfo.flags |= ASYNC_SPD_VHI;
+    if (ioctl(this->serial_fd, TIOCSSERIAL, &serinfo) < 0) {
+      throw std::runtime_error("Cannot set serial port configuration (TIOCSSERIAL) to " + device);
+    }
+#endif
+
+    cfsetispeed(&conf, baud);
+    cfsetospeed(&conf, baud);
+
+    if (tcsetattr(this->serial_fd, TCSANOW, &conf) < 0) {
+      throw std::runtime_error("Cannot set serial port configuration to " + device);
+    }
+
+    termios new_conf;
+    if (tcgetattr(this->serial_fd, &new_conf) < 0) {
+      throw std::runtime_error("Cannot get serial port configuration from " + device);
+    }
+
+    // Not comparing the entire c_cc, because it differs in my environtment...
+    // That's also a reason why memcmp isn't used here
+    if (conf.c_iflag != new_conf.c_iflag ||
+        conf.c_oflag != new_conf.c_oflag ||
+        conf.c_cflag != new_conf.c_cflag ||
+        conf.c_lflag != new_conf.c_lflag ||
+        conf.c_cc[VMIN] != new_conf.c_cc[VMIN] ||
+        conf.c_cc[VTIME] != new_conf.c_cc[VTIME] ||
+        conf.c_ispeed != new_conf.c_ispeed ||
+        conf.c_ospeed != new_conf.c_ospeed) {
+      throw std::runtime_error("Cannot set all serial port configuration to " + device);
     }
 }
 
@@ -68,7 +132,12 @@ IOProvider::~IOProvider() {
 void IOProvider::close() {
   if (!this->is_closed) {
     ::close(this->gpio_fd);
+
+    if (tcsetattr(this->serial_fd, TCSANOW, &this->prev_term_config) < 0) {
+      throw std::runtime_error("Cannot restore serial port configuration");
+    }
     ::close(this->serial_fd);
+
     auto const export_fd = ::open("/sys/class/gpio/unexport", O_RDWR);
     if(export_fd < 0) {
       throw std::runtime_error("Cannot open /sys/class/gpio/unexport");
