@@ -56,6 +56,15 @@ void IOProvider::init_serial(std::string const& device) {
     if (tcsetattr(this->serial_fd, TCSANOW, &conf) < 0) {
       throw std::runtime_error("Cannot set serial port configuration to " + device);
     }
+
+    termios new_conf;
+    if (tcgetattr(this->serial_fd, &new_conf) < 0) {
+      throw std::runtime_error("Cannot get serial port configuration from " + device);
+    }
+
+    if (memcmp (&conf, &new_conf, sizeof(conf)) != 0) {
+      throw std::runtime_error("Cannot set all serial port configuration to " + device);
+    }
 }
 
 void IOProvider::init_gpio_export() {
