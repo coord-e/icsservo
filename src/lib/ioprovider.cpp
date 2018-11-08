@@ -27,6 +27,17 @@ void IOProvider::init_serial(std::string const& device) {
     conf->c_cflag &= ~CSIZE;
     conf->c_cflag |= CS8;
     conf->c_cflag |= PARENB;
+
+#ifdef B115200
+    const auto baud = B115200;
+#else
+    // B115200 is non-standard
+    // In an environment where there is no B115200, you have to set spd_vhi with setserial(8)
+    const auto baud = B38400;
+#endif
+    cfsetispeed(&conf, baud);
+    cfsetospeed(&conf, baud);
+
     tcsetattr(this->serial_fd, TCSANOW, &conf);
 }
 
