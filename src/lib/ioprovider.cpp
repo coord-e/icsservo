@@ -11,6 +11,7 @@
 #include <cstdlib>
 #include <iostream>
 #include <vector>
+#include <system_error>
 
 #ifdef B115200
 #define HAS_B115200
@@ -24,11 +25,11 @@ namespace ICSServo {
 void IOProvider::init_serial(std::string const& device) {
     this->serial_fd = ::open(device.c_str(), O_RDWR | O_NOCTTY);
     if (this->serial_fd < 0) {
-      throw std::runtime_error("Cannot open " + device);
+      throw std::system_error(std::error_code(errno, std::system_category()), "Cannot open " + device);
     }
 
     if (tcgetattr(this->serial_fd, &this->prev_term_config) < 0) {
-      throw std::runtime_error("Cannot get serial port configuration from " + device);
+      throw std::system_error(std::error_code(errno, std::system_category()), "Cannot get serial port configuration from " + device);
     }
 
     termios conf;
@@ -51,11 +52,11 @@ void IOProvider::init_serial(std::string const& device) {
 
     serial_struct serinfo;
     if (ioctl(fd, TIOCGSERIAL, &serinfo) < 0) {
-      throw std::runtime_error("Cannot get serial port configuration (TIOCGSERIAL) from " + device);
+      throw std::system_error(std::error_code(errno, std::system_category()), "Cannot get serial port configuration (TIOCGSERIAL) from " + device);
     }
     serinfo.flags |= ASYNC_SPD_VHI;
     if (ioctl(this->serial_fd, TIOCSSERIAL, &serinfo) < 0) {
-      throw std::runtime_error("Cannot set serial port configuration (TIOCSSERIAL) to " + device);
+      throw std::system_error(std::error_code(errno, std::system_category()), "Cannot set serial port configuration (TIOCSSERIAL) to " + device);
     }
 #endif
 
@@ -63,12 +64,12 @@ void IOProvider::init_serial(std::string const& device) {
     cfsetospeed(&conf, baud);
 
     if (tcsetattr(this->serial_fd, TCSANOW, &conf) < 0) {
-      throw std::runtime_error("Cannot set serial port configuration to " + device);
+      throw std::system_error(std::error_code(errno, std::system_category()), "Cannot set serial port configuration to " + device);
     }
 
     termios new_conf;
     if (tcgetattr(this->serial_fd, &new_conf) < 0) {
-      throw std::runtime_error("Cannot get serial port configuration from " + device);
+      throw std::system_error(std::error_code(errno, std::system_category()), "Cannot get serial port configuration from " + device);
     }
 
     // Not comparing the entire c_cc, because it differs in my environtment...
@@ -88,13 +89,13 @@ void IOProvider::init_serial(std::string const& device) {
 void IOProvider::init_gpio_export() {
     auto const export_fd = ::open("/sys/class/gpio/export", O_RDWR);
     if(export_fd < 0) {
-      throw std::runtime_error("Cannot open /sys/class/gpio/export");
+      throw std::system_error(std::error_code(errno, std::system_category()), "Cannot open /sys/class/gpio/export");
     }
 
     char buf[16];
     ::sprintf(buf, "%d\n", this->en_idx);
     if(::write(export_fd, buf, std::strlen(buf)) < 0) {
-      throw std::runtime_error("Cannot write on /sys/class/gpio/export");
+      throw std::system_error(std::error_code(errno, std::system_category()), "Cannot write on /sys/class/gpio/export");
     }
     ::close(export_fd);
 }
@@ -104,17 +105,17 @@ void IOProvider::init_gpio_setup() {
     auto const direction_path = gpio_base + "/direction";
     auto const direction_fd = ::open(direction_path.c_str(), O_RDWR);
     if(direction_fd < 0) {
-      throw std::runtime_error("Cannot open " + direction_path);
+      throw std::system_error(std::error_code(errno, std::system_category()), "Cannot open " + direction_path);
     }
     if(::write(direction_fd, "out\n", 4) < 0) {
-      throw std::runtime_error("Cannot write on " + direction_path);
+      throw std::system_error(std::error_code(errno, std::system_category()), "Cannot write on " + direction_path);
     }
     ::close(direction_fd);
 
     auto const value_path = gpio_base + "/value";
     this->gpio_fd = ::open(value_path.c_str(), O_RDWR);
     if(this->gpio_fd < 0) {
-      throw std::runtime_error("Cannot open " + value_path);
+      throw std::system_error(std::error_code(errno, std::system_category()), "Cannot open " + value_path);
     }
 }
 
@@ -134,19 +135,19 @@ void IOProvider::close() {
     ::close(this->gpio_fd);
 
     if (tcsetattr(this->serial_fd, TCSANOW, &this->prev_term_config) < 0) {
-      throw std::runtime_error("Cannot restore serial port configuration");
+      throw std::system_error(std::error_code(errno, std::system_category()), "Cannot restore serial port configuration");
     }
     ::close(this->serial_fd);
 
     auto const export_fd = ::open("/sys/class/gpio/unexport", O_RDWR);
     if(export_fd < 0) {
-      throw std::runtime_error("Cannot open /sys/class/gpio/unexport");
+      throw std::system_error(std::error_code(errno, std::system_category()), "Cannot open /sys/class/gpio/unexport");
     }
 
     char buf[16];
     ::sprintf(buf, "%d\n", this->en_idx);
     if(::write(export_fd, buf, std::strlen(buf)) < 0) {
-      throw std::runtime_error("Cannot write on /sys/class/gpio/unexport");
+      throw std::system_error(std::error_code(errno, std::system_category()), "Cannot write on /sys/class/gpio/unexport");
     }
     ::close(export_fd);
     this->is_closed = true;
@@ -155,7 +156,7 @@ void IOProvider::close() {
 
 void IOProvider::set_gpio_value(bool state) {
   if(::write(this->gpio_fd, state ? "1\n" : "0\n", 2) < 0) {
-    throw std::runtime_error("Cannot write gpio value ");
+    throw std::system_error(std::error_code(errno, std::system_category()), "Cannot write gpio value ");
   }
 }
 
@@ -187,13 +188,13 @@ ServoID IOProvider::get_id() {
 
 void IOProvider::write_serial(std::uint8_t const* ptr, std::size_t len) {
   if(::write(this->serial_fd, ptr, len) < 0) {
-    throw std::runtime_error("Cannot write to serial device file");
+    throw std::system_error(std::error_code(errno, std::system_category()), "Cannot write to serial device file");
   }
 }
 
 void IOProvider::read_serial(std::uint8_t* ptr, std::size_t len) {
   if(::read(this->serial_fd, ptr, len) < 0) {
-    throw std::runtime_error("Cannot read from serial device file");
+    throw std::system_error(std::error_code(errno, std::system_category()), "Cannot read from serial device file");
   }
 }
 
