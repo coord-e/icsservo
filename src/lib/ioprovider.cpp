@@ -121,13 +121,13 @@ void IOProvider::init_gpio_setup() {
 
 IOProvider::~IOProvider() {
   try {
+    this->close();
+  } catch (const std::exception& e) {
     try {
-      this->close();
-    } catch (const std::exception& e) {
       std::cerr << "Exeption happend during the destruction of IOProvider" << std::endl << e.what() << std::endl;
-      std::abort();
-    }
-  } catch (...) {}
+    } catch (...) {}
+    std::abort();
+  }
 }
 
 void IOProvider::close() {
