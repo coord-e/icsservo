@@ -25,6 +25,7 @@ elseif(CONFIG STREQUAL "Release")
 endif()
 
 include_directories(include/)
+install(DIRECTORY include DESTINATION include FILES_MATCHING PATTERN "*.hpp")
 
 add_subdirectory(lib)
 add_subdirectory(bin)

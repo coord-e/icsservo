@@ -11,3 +11,5 @@ target_link_libraries(get_id_bin icsservo_lib)
 add_executable(set_id_bin set_id.cpp)
 set_target_properties(set_id_bin PROPERTIES OUTPUT_NAME "set_id")
 target_link_libraries(set_id_bin icsservo_lib)
+
+install(TARGETS servo_bin get_id_bin set_id_bin RUNTIME DESTINATION bin)
