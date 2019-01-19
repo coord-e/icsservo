@@ -9,7 +9,7 @@ set_target_properties(servo_lib PROPERTIES OUTPUT_NAME "icsservo-servo")
 set_target_properties(servo_lib PROPERTIES POSITION_INDEPENDENT_CODE TRUE)
 target_link_libraries(servo_lib ioprovider_lib)
 
-add_library(icsservo_lib SHARED)
+add_library(icsservo_lib SHARED icsservo.cpp)
 set_target_properties(icsservo_lib PROPERTIES OUTPUT_NAME "icsservo")
 target_link_libraries(icsservo_lib servo_lib)
 
