@@ -13,7 +13,7 @@ env:
   - CXX=g++-5
 script:
   - pip install -e .
-  - mkdir -p build && cd $_
+  - mkdir -p src/build && cd $_
   - cmake ..
   - make -j"$(nproc)"
 before_deploy:
