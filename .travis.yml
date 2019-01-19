@@ -14,7 +14,7 @@ env:
 script:
   - pip install -e .
   - mkdir -p src/build && cd $_
-  - cmake ..
+  - cmake .. -DPYBIND11_PYTHON_VERSION=${TRAVIS_PYTHON_VERSION}
   - make -j"$(nproc)"
 before_deploy:
   - cpack -D CPACK_OUTPUT_FILE_PREFIX=dist
