@@ -9,3 +9,4 @@ set_target_properties(icsservo_lib PROPERTIES OUTPUT_NAME "icsservo")
 set_target_properties(icsservo_lib PROPERTIES POSITION_INDEPENDENT_CODE TRUE)
 target_link_libraries(icsservo_lib ioprovider_lib)
 
+install(TARGETS icsservo_lib ARCHIVE DESTINATION lib)
