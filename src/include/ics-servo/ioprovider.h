@@ -62,6 +62,7 @@ public:
     std::vector<std::uint8_t> buf (len);
 
     this->recv(buf.data(), len);
+    std::copy(buf.cbegin(), buf.cend(), first);
   }
 
   void set_id(ServoID);
