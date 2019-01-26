@@ -48,7 +48,4 @@ if(${BUILD_PYTHON_MODULE})
   add_subdirectory(python)
 endif()
 
-set(CPACK_PACKAGE_FILE_NAME "${PROJECT_NAME}-${PROJECT_VERSION}-${CMAKE_SYSTEM_NAME}-${CMAKE_SYSTEM_PROCESSOR}")
-set(CPACK_GENERATOR "TGZ;ZIP")
-
-include(CPack)
+include(cmake/cpack.cmake)
