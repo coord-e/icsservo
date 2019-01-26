@@ -27,16 +27,18 @@ endif()
 option(BUILD_SERVOARRAY_DRIVER "Build a driver for servoarray" ON)
 option(BUILD_PYTHON_MODULE "Build a python binding" ON)
 
-if(${BUILD_SERVOARRAY_DRIVER})
-  find_package(servoarray 0.1 REQUIRED)
-  include_directories(${SERVOARRAY_INCLUDE_DIR})
-endif()
-
 include_directories(include/)
 add_subdirectory(include)
 
 add_subdirectory(lib)
 add_subdirectory(bin)
+
+if(${BUILD_SERVOARRAY_DRIVER})
+  find_package(servoarray 0.1 REQUIRED)
+  include_directories(${SERVOARRAY_INCLUDE_DIR})
+
+  add_subdirectory(driver)
+endif()
 
 if(${BUILD_PYTHON_MODULE})
   add_subdirectory(pybind11)
