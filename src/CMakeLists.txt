@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.7)
 cmake_policy(SET CMP0048 NEW)
 
-project(ics-servo VERSION 0.1 LANGUAGES CXX)
+project(icsservo VERSION 0.1 LANGUAGES CXX)
 
 if(NOT CONFIG)
   set(CONFIG Release)
