@@ -31,6 +31,6 @@ public:
 
 extern "C" ServoArray::Driver* servoarray_driver(const ServoArray::DriverParams& params) {
   const double delay = params.get_or<double>("delay", 0.5);
-  auto io = std::make_shared<ICSServo::IOProvider>(params.get<std::string>("device"), params.get<unsigned>("en_pin"), std::chrono::duration<double>(delay));
+  auto io = std::make_shared<ICSServo::IOProvider>(params.get<std::string>("device"), params.get<std::size_t>("en_pin"), std::chrono::duration<double>(delay));
   return new ICSServo::ICSDriver(params.get<std::uint8_t>("size"), io);
 }
