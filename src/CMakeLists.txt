@@ -25,6 +25,7 @@ elseif(CONFIG STREQUAL "Release")
 endif()
 
 option(BUILD_SERVOARRAY_DRIVER "Build a driver for servoarray" ON)
+option(BUILD_PYTHON_MODULE "Build a python binding" ON)
 
 if(${BUILD_SERVOARRAY_DRIVER})
   find_package(servoarray 0.1 REQUIRED)
@@ -37,11 +38,13 @@ install(DIRECTORY include/ DESTINATION include FILES_MATCHING PATTERN "*.h")
 add_subdirectory(lib)
 add_subdirectory(bin)
 
-add_subdirectory(pybind11)
-# pybind11 headers produce so many errors with strict compiler options
-include_directories(SYSTEM ${PYBIND11_INCLUDE_DIR})
+if(${BUILD_PYTHON_MODULE})
+  add_subdirectory(pybind11)
+  # pybind11 headers produce so many errors with strict compiler options
+  include_directories(SYSTEM ${PYBIND11_INCLUDE_DIR})
 
-add_subdirectory(python)
+  add_subdirectory(python)
+endif()
 
 set(CPACK_PACKAGE_FILE_NAME "${PROJECT_NAME}-${PROJECT_VERSION}-${CMAKE_SYSTEM_NAME}-${CMAKE_SYSTEM_PROCESSOR}")
 set(CPACK_GENERATOR "TGZ;ZIP")
