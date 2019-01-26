@@ -33,7 +33,7 @@ if(${BUILD_SERVOARRAY_DRIVER})
 endif()
 
 include_directories(include/)
-install(DIRECTORY include/ DESTINATION include FILES_MATCHING PATTERN "*.h")
+add_subdirectory(include)
 
 add_subdirectory(lib)
 add_subdirectory(bin)
