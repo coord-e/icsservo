@@ -1,0 +1,14 @@
+set(icsservo_VERSION @icsservo_VERSION@)
+set(icsservo_VERSION_MAJOR @icsservo_VERSION_MAJOR@)
+set(icsservo_VERSION_MINOR @icsservo_VERSION_MINOR@)
+set(icsservo_VERSION_PATCH @icsservo_VERSION_PATCH@)
+set(icsservo_VERSION_TWEAK @icsservo_VERSION_TWEAK@)
+
+@PACKAGE_INIT@
+
+set_and_check(icsservo_INCLUDE_DIR "@PACKAGE_INCLUDE_INSTALL_DIR@")
+set_and_check(icsservo_LIB_DIR "@PACKAGE_LIB_INSTALL_DIR@")
+
+set(icsservo_LIBRARIES icsservo)
+
+check_required_components(icsservo)

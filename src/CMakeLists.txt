@@ -10,6 +10,9 @@ endif()
 option(BUILD_SERVOARRAY_DRIVER "Build a driver for servoarray" ON)
 option(BUILD_PYTHON_MODULE "Build a python binding" ON)
 
+set(INCLUDE_INSTALL_DIR include CACHE PATH "installation directory of header files, relative to ${CMAKE_INSTALL_PREFIX}")
+set(LIB_INSTALL_DIR lib CACHE PATH "installation directory of library files, relative to ${CMAKE_INSTALL_PREFIX}")
+
 set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(PYBIND11_CPP_STANDARD -std=c++14)
@@ -22,6 +25,8 @@ add_subdirectory(include)
 
 add_subdirectory(lib)
 add_subdirectory(bin)
+
+add_subdirectory(config)
 
 if(${BUILD_SERVOARRAY_DRIVER})
   find_package(servoarray 0.1 REQUIRED)
