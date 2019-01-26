@@ -24,6 +24,9 @@ elseif(CONFIG STREQUAL "Release")
   add_compile_options(-O3 -Wno-error)
 endif()
 
+find_package(servoarray 0.1 REQUIRED)
+include_directories(${SERVOARRAY_INCLUDE_DIR})
+
 include_directories(include/)
 install(DIRECTORY include/ DESTINATION include FILES_MATCHING PATTERN "*.h")
 
