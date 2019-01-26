@@ -24,8 +24,12 @@ elseif(CONFIG STREQUAL "Release")
   add_compile_options(-O3 -Wno-error)
 endif()
 
-find_package(servoarray 0.1 REQUIRED)
-include_directories(${SERVOARRAY_INCLUDE_DIR})
+option(BUILD_SERVOARRAY_DRIVER "Build a driver for servoarray" ON)
+
+if(${BUILD_SERVOARRAY_DRIVER})
+  find_package(servoarray 0.1 REQUIRED)
+  include_directories(${SERVOARRAY_INCLUDE_DIR})
+endif()
 
 include_directories(include/)
 install(DIRECTORY include/ DESTINATION include FILES_MATCHING PATTERN "*.h")
